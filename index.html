@@ -1,0 +1,1431 @@
+﻿<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>個性恩賜問卷調查</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Noto Sans HK', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            padding: 30px 20px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+            margin-bottom: 25px;
+        }
+
+        header h1 {
+            font-size: 2em;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            color: #7f8c8d;
+            font-size: 1.1em;
+        }
+
+        .admin-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 10px 20px;
+            background: #2c3e50;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.9em;
+            font-weight: 600;
+            cursor: pointer;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .admin-btn:hover {
+            background: #34495e;
+            transform: translateY(-2px);
+        }
+
+        .rating-guide {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 15px 0;
+            text-align: center;
+        }
+
+        .rating-guide h3 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        .rating-guide .ratings {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .rating-guide .ratings span {
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.95em;
+        }
+
+        .rating-3 { background: #e74c3c; color: white; }
+        .rating-2 { background: #f39c12; color: white; }
+        .rating-1 { background: #3498db; color: white; }
+        .rating-0 { background: #95a5a6; color: white; }
+
+        .progress-container {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            margin-bottom: 25px;
+        }
+
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .progress-info span {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .progress-bar {
+            height: 10px;
+            background: #ecf0f1;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 5px;
+            transition: width 0.4s ease;
+            width: 0%;
+        }
+
+        .question-card {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+            margin-bottom: 25px;
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .question-card.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .question-number {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .question-text {
+            font-size: 1.15em;
+            color: #2c3e50;
+            font-weight: 600;
+            margin-bottom: 25px;
+            line-height: 1.7;
+        }
+
+        .options {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        @media (max-width: 600px) {
+            .options {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .option-btn {
+            padding: 18px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            background: white;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 500;
+            color: #555;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .option-btn:hover {
+            border-color: #667eea;
+            background: #f0f0ff;
+            transform: translateY(-2px);
+        }
+
+        .option-btn.selected-3 {
+            border-color: #e74c3c;
+            background: #e74c3c;
+            color: white;
+            box-shadow: 0 4px 15px rgba(231,76,60,0.3);
+        }
+
+        .option-btn.selected-2 {
+            border-color: #f39c12;
+            background: #f39c12;
+            color: white;
+            box-shadow: 0 4px 15px rgba(243,156,18,0.3);
+        }
+
+        .option-btn.selected-1 {
+            border-color: #3498db;
+            background: #3498db;
+            color: white;
+            box-shadow: 0 4px 15px rgba(52,152,219,0.3);
+        }
+
+        .option-btn.selected-0 {
+            border-color: #95a5a6;
+            background: #95a5a6;
+            color: white;
+            box-shadow: 0 4px 15px rgba(149,165,166,0.3);
+        }
+
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-prev {
+            background: #ecf0f1;
+            color: #555;
+        }
+
+        .btn-prev:hover {
+            background: #d5dbdb;
+        }
+
+        .btn-next {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-next:hover {
+            background: #5a67d8;
+            transform: translateY(-2px);
+        }
+
+        .btn-submit {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .btn-submit:hover {
+            background: #c0392b;
+            transform: translateY(-2px);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .result-container {
+            display: none;
+            animation: fadeIn 0.6s ease;
+        }
+
+        .result-container.active {
+            display: block;
+        }
+
+        .result-header {
+            text-align: center;
+            background: white;
+            border-radius: 16px;
+            padding: 40px 30px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        .result-header h2 {
+            font-size: 1.8em;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .result-header p {
+            color: #7f8c8d;
+            font-size: 1.1em;
+        }
+
+        .chart-container {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        .chart-container h3 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .chart-bar-group {
+            margin-bottom: 15px;
+        }
+
+        .chart-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        .chart-label .gift-name {
+            color: #2c3e50;
+        }
+
+        .chart-label .gift-score {
+            color: #7f8c8d;
+        }
+
+        .chart-bar-bg {
+            height: 30px;
+            background: #ecf0f1;
+            border-radius: 15px;
+            overflow: hidden;
+        }
+
+        .chart-bar-fill {
+            height: 100%;
+            border-radius: 15px;
+            transition: width 1s ease;
+            width: 0%;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 10px;
+            font-size: 0.85em;
+            font-weight: 600;
+            color: white;
+        }
+
+        .gift-預言 .chart-bar-fill { background: linear-gradient(90deg, #e74c3c, #c0392b); }
+        .gift-執事 .chart-bar-fill { background: linear-gradient(90deg, #3498db, #2980b9); }
+        .gift-教導 .chart-bar-fill { background: linear-gradient(90deg, #2ecc71, #27ae60); }
+        .gift-勸化 .chart-bar-fill { background: linear-gradient(90deg, #f39c12, #e67e22); }
+        .gift-施捨 .chart-bar-fill { background: linear-gradient(90deg, #9b59b6, #8e44ad); }
+        .gift-治理 .chart-bar-fill { background: linear-gradient(90deg, #1abc9c, #16a085); }
+        .gift-憐憫人 .chart-bar-fill { background: linear-gradient(90deg, #e91e63, #c2185b); }
+
+        .result-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .gift-card {
+            background: white;
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            transition: transform 0.3s ease;
+        }
+
+        .gift-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .gift-card h4 {
+            font-size: 1.2em;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .gift-card .score-badge {
+            padding: 3px 12px;
+            border-radius: 15px;
+            font-size: 0.8em;
+            font-weight: 600;
+        }
+
+        .score-high { background: #e74c3c; color: white; }
+        .score-medium { background: #f39c12; color: white; }
+        .score-low { background: #95a5a6; color: white; }
+
+        .gift-card p {
+            color: #7f8c8d;
+            font-size: 0.95em;
+            line-height: 1.5;
+        }
+
+        .btn-restart {
+            display: block;
+            width: 200px;
+            margin: 0 auto;
+            padding: 15px 30px;
+            background: #2c3e50;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-restart:hover {
+            background: #34495e;
+            transform: translateY(-2px);
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: rgba(255,255,255,0.7);
+            font-size: 0.9em;
+        }
+
+        /* ===== Admin Panel Styles ===== */
+        .admin-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 999;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .admin-overlay.active {
+            display: block;
+        }
+
+        .admin-panel {
+            background: white;
+            border-radius: 16px;
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 30px;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .admin-panel h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .admin-panel .close-btn {
+            float: right;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .admin-panel .close-btn:hover {
+            background: #c0392b;
+        }
+
+        .admin-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .stat-card .stat-number {
+            font-size: 2em;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .stat-card .stat-label {
+            color: #7f8c8d;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+
+        .admin-chart-container {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .admin-chart-container h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .admin-chart-bar-group {
+            margin-bottom: 12px;
+        }
+
+        .admin-chart-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        .admin-chart-label .gift-name {
+            color: #2c3e50;
+        }
+
+        .admin-chart-label .gift-count {
+            color: #7f8c8d;
+        }
+
+        .admin-chart-bar-bg {
+            height: 25px;
+            background: #ecf0f1;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .admin-chart-bar-fill {
+            height: 100%;
+            border-radius: 12px;
+            transition: width 1s ease;
+            width: 0%;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 10px;
+            font-size: 0.8em;
+            font-weight: 600;
+            color: white;
+        }
+
+        .admin-data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .admin-data-table th {
+            background: #667eea;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-size: 0.9em;
+        }
+
+        .admin-data-table td {
+            padding: 10px 12px;
+            border-bottom: 1px solid #ecf0f1;
+            font-size: 0.9em;
+        }
+
+        .admin-data-table tr:hover {
+            background: #f0f0ff;
+        }
+
+        .admin-data-table .delete-btn {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.8em;
+        }
+
+        .admin-data-table .delete-btn:hover {
+            background: #c0392b;
+        }
+
+        .admin-clear-btn {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            margin-top: 15px;
+        }
+
+        .admin-clear-btn:hover {
+            background: #c0392b;
+        }
+
+        .no-data {
+            text-align: center;
+            padding: 40px;
+            color: #95a5a6;
+            font-size: 1.1em;
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
+            vertical-align: middle;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .config-form {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .config-form label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .config-form input {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 1em;
+        }
+
+        .config-form input:focus {
+            border-color: #667eea;
+            outline: none;
+        }
+
+        .config-form .save-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .config-form .save-btn:hover {
+            background: #5a67d8;
+        }
+
+        .config-form .status {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 0.9em;
+        }
+
+        .status-success {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .status-loading {
+            background: #fff3cd;
+            color: #856404;
+        }
+    </style>
+</head>
+<body>
+    <button class="admin-btn" onclick="openAdminPanel()">📊 管理員後台</button>
+
+    <div class="container">
+        <header>
+            <h1>個性恩賜問卷調查</h1>
+            <p>請根據以下評分標準，選出最適合你的答案</p>
+            <div class="rating-guide">
+                <h3>評分標準</h3>
+                <div class="ratings">
+                    <span class="rating-3">3分 = 很對</span>
+                    <span class="rating-2">2分 = 對</span>
+                    <span class="rating-1">1分 = 有一點對</span>
+                    <span class="rating-0">0分 = 完全不對</span>
+                </div>
+            </div>
+        </header>
+
+        <div id="questionnaireArea">
+            <div class="progress-container">
+                <div class="progress-info">
+                    <span>問題 <span id="currentQ">1</span> / 35</span>
+                    <span id="progressPercent">0%</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+            </div>
+
+            <div id="questionsContainer"></div>
+
+            <div class="nav-buttons" id="navButtons">
+                <button class="btn btn-prev" id="prevBtn" onclick="prevQuestion()">← 上一題</button>
+                <button class="btn btn-next" id="nextBtn" onclick="nextQuestion()">下一題 →</button>
+                <button class="btn btn-submit" id="submitBtn" onclick="submitQuiz()" style="display:none;">📊 查看結果</button>
+            </div>
+        </div>
+
+        <div class="result-container" id="resultContainer">
+            <div class="result-header">
+                <h2>🎉 你的個性恩賜分析結果</h2>
+                <p>以下是你的恩賜分數分佈</p>
+                <div id="topGiftDisplay" style="font-size:1.3em; color:#e74c3c; font-weight:700; margin-top:15px; padding:10px 20px; background:#fdf2f2; border-radius:10px; display:inline-block;"></div>
+            </div>
+
+            <div class="chart-container">
+                <h3>📊 恩賜分數圖表</h3>
+                <div id="chartBars"></div>
+            </div>
+
+            <div class="result-details" id="resultCards"></div>
+
+            <button class="btn-restart" onclick="restartQuiz()">🔄 重新測試</button>
+        </div>
+
+        <footer>
+            <p>個性恩賜問卷調查</p>
+        </footer>
+    </div>
+
+    <!-- Admin Panel -->
+    <div class="admin-overlay" id="adminOverlay">
+        <div class="admin-panel">
+            <button class="close-btn" onclick="closeAdminPanel()">✕ 關閉</button>
+            <h2>📊 管理員後台 - 所有結果統計</h2>
+            
+            <!-- GitHub 設定 -->
+            <div class="config-form">
+                <h3 style="margin-bottom:15px;">⚙️ GitHub 設定（只需設定一次）</h3>
+                <label>GitHub Token</label>
+                <input type="password" id="githubToken" placeholder="輸入你的 GitHub Personal Access Token">
+                <label>GitHub 用戶名</label>
+                <input type="text" id="githubUsername" placeholder="例如: john123">
+                <label>Repository 名稱</label>
+                <input type="text" id="githubRepo" placeholder="例如: gift-survey">
+                <button class="save-btn" onclick="saveGitHubConfig()">💾 儲存設定</button>
+                <div id="configStatus"></div>
+            </div>
+
+            <div class="admin-stats" id="adminStats">
+                <div class="stat-card">
+                    <div class="stat-number" id="totalParticipants">0</div>
+                    <div class="stat-label">總參與人數</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="topGiftCount">0</div>
+                    <div class="stat-label">最多人擁有嘅恩賜</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="topGiftName">-</div>
+                    <div class="stat-label">最多人恩賜名稱</div>
+                </div>
+            </div>
+
+            <div class="admin-chart-container">
+                <h3>📊 恩賜人數比例（棒型圖）</h3>
+                <div id="adminChartBars"></div>
+            </div>
+
+            <div class="admin-chart-container">
+                <h3>📋 所有參與者記錄</h3>
+                <div id="adminDataTable"></div>
+                <button class="admin-clear-btn" onclick="clearAllData()">🗑️ 清除所有數據</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            { id: 1, text: '我喜歡用新鮮，富靈感和熱情的方式去表達神的話。', gift: '預言' },
+            { id: 2, text: '為了滿足他人生活上的需要，我寧可先忽略自己的需要。', gift: '執事' },
+            { id: 3, text: '我喜歡在經文中間發現其中的真理。', gift: '教導' },
+            { id: 4, text: '我可以用說話鼓勵那些搖動的或心中憂傷的人。', gift: '勸化' },
+            { id: 5, text: '我可以有效地處理自己的經濟需要，並且能慷慨地奉獻給神的事工。', gift: '施捨' },
+            { id: 6, text: '交托責任給別人和組織人去達成屬靈的目標，對我來說是件容易的事情。', gift: '治理' },
+            { id: 7, text: '對於遭遇不幸的人，我很容易會表達同情。', gift: '憐憫人' },
+            { id: 8, text: '當我要勸勉別人檢討他們的屬靈動機時，我的言詞鋒利，直迫人心。', gift: '預言' },
+            { id: 9, text: '我常使人有賓至如歸的感覺。', gift: '執事' },
+            { id: 10, text: '我喜歡發掘聖經的真理或有關聖經中的事蹟，並樂於與人分享。', gift: '教導' },
+            { id: 11, text: '我十分關心別人有沒有在靈性上有成長。', gift: '勸化' },
+            { id: 12, text: '我樂於奉獻物質上的財物，好使神的事工可以順利推展。', gift: '施捨' },
+            { id: 13, text: '我可以有效地監察別人的活動。', gift: '治理' },
+            { id: 14, text: '我樂於探訪病人，或囚犯。', gift: '憐憫人' },
+            { id: 15, text: '我可以用富於愛心和信服力的方式向會眾說明神的道。', gift: '預言' },
+            { id: 16, text: '我樂於接受委派協助神的工作，但不要叫我做領袖。', gift: '執事' },
+            { id: 17, text: '我很關注解釋真理的方式，必須對字義解釋恰當清晰。', gift: '教導' },
+            { id: 18, text: '我善於幫助照顧那些在感情方面受創傷的人。', gift: '勸化' },
+            { id: 19, text: '為了福音的原故，要求我借出私人物件，對我來說是絕無問題的。', gift: '施捨' },
+            { id: 20, text: '我能有效地計劃出行動的方案，提供足夠的細節或細則，使人可以按步就班地完成計劃。', gift: '治理' },
+            { id: 21, text: '對於在患難中的人，我十分關注。', gift: '憐憫人' },
+            { id: 22, text: '每當我講述神的話，我都要提出足夠的證據去證明自己所講的。', gift: '預言' },
+            { id: 23, text: '我樂於為客人提供恩惠和殷勤的服侍。', gift: '執事' },
+            { id: 24, text: '我勤力研究神的話，並小心地查考有關的書籍。', gift: '教導' },
+            { id: 25, text: '我能夠有效地輔導那些有個人困難的人。', gift: '勸化' },
+            { id: 26, text: '我對教會各部分的經濟情況都很關心。', gift: '施捨' },
+            { id: 27, text: '我深深地感受到流暢的運作組織對教會事工能在每一階段順利展開和完成的重要性。', gift: '治理' },
+            { id: 28, text: '我樂於關心和照顧那些被大部份人遺忘的人。', gift: '憐憫人' },
+            { id: 29, text: '我發覺我的講道通常都會挑戰人作出某些決定。', gift: '預言' },
+            { id: 30, text: '我樂於分擔主要領袖們的工作，減低他們的工作量，使他們可以更專心於那更重要的工作。', gift: '執事' },
+            { id: 31, text: '我能夠好好地解釋聖經的來龍去脈。', gift: '教導' },
+            { id: 32, text: '我對於造成人們靈性退後的原因十分敏感，並渴望幫助他們克服靈性成長的障礙。', gift: '勸化' },
+            { id: 33, text: '我小心處理金錢，並禱告能正確地分配金錢支助聖工。', gift: '施捨' },
+            { id: 34, text: '我知道自己正向那個方向走，也可以帶別人跟我一起走。', gift: '治理' },
+            { id: 35, text: '我能夠感受到別人的感受，並很快作出回應，幫助他們。', gift: '憐憫人' }
+        ];
+
+        let currentQuestion = 0;
+        let answers = new Array(35).fill(null);
+        const totalQuestions = 35;
+
+        function init() {
+            renderQuestions();
+            showQuestion(0);
+            updateProgress();
+            updateNavButtons();
+            loadGitHubConfig();
+        }
+
+        function renderQuestions() {
+            const container = document.getElementById('questionsContainer');
+            container.innerHTML = '';
+
+            questions.forEach((q, index) => {
+                const card = document.createElement('div');
+                card.className = `question-card ${index === 0 ? 'active' : ''}`;
+                card.id = `question-${index}`;
+
+                card.innerHTML = `
+                    <div class="question-number">問題 ${index + 1} / ${totalQuestions}</div>
+                    <div class="question-text">${q.text}</div>
+                    <div class="options">
+                        <button class="option-btn" data-score="3" onclick="selectOption(${index}, 3)">
+                            很對
+                        </button>
+                        <button class="option-btn" data-score="2" onclick="selectOption(${index}, 2)">
+                            對
+                        </button>
+                        <button class="option-btn" data-score="1" onclick="selectOption(${index}, 1)">
+                            有一點對
+                        </button>
+                        <button class="option-btn" data-score="0" onclick="selectOption(${index}, 0)">
+                            完全不對
+                        </button>
+                    </div>
+                `;
+
+                container.appendChild(card);
+            });
+        }
+
+        function selectOption(index, score) {
+            answers[index] = score;
+
+            const card = document.getElementById(`question-${index}`);
+            const buttons = card.querySelectorAll('.option-btn');
+            buttons.forEach(btn => {
+                btn.className = 'option-btn';
+                if (parseInt(btn.dataset.score) === score) {
+                    btn.classList.add(`selected-${score}`);
+                }
+            });
+
+            updateNavButtons();
+        }
+
+        function showQuestion(index) {
+            document.querySelectorAll('.question-card').forEach(card => {
+                card.classList.remove('active');
+            });
+            const target = document.getElementById(`question-${index}`);
+            if (target) {
+                target.classList.add('active');
+            }
+            currentQuestion = index;
+            document.getElementById('currentQ').textContent = index + 1;
+            updateProgress();
+            updateNavButtons();
+        }
+
+        function updateProgress() {
+            const answered = answers.filter(a => a !== null).length;
+            const percent = Math.round((answered / totalQuestions) * 100);
+            document.getElementById('progressFill').style.width = `${percent}%`;
+            document.getElementById('progressPercent').textContent = `${percent}%`;
+        }
+
+        function updateNavButtons() {
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const submitBtn = document.getElementById('submitBtn');
+
+            prevBtn.disabled = currentQuestion === 0;
+
+            const allAnswered = answers.every(a => a !== null);
+
+            if (currentQuestion === totalQuestions - 1 || allAnswered) {
+                nextBtn.style.display = 'none';
+                submitBtn.style.display = 'inline-block';
+                submitBtn.disabled = !allAnswered;
+            } else {
+                nextBtn.style.display = 'inline-block';
+                submitBtn.style.display = 'none';
+                nextBtn.disabled = answers[currentQuestion] === null;
+            }
+        }
+
+        function prevQuestion() {
+            if (currentQuestion > 0) {
+                showQuestion(currentQuestion - 1);
+            }
+        }
+
+        function nextQuestion() {
+            if (answers[currentQuestion] !== null && currentQuestion < totalQuestions - 1) {
+                showQuestion(currentQuestion + 1);
+            }
+        }
+
+        function submitQuiz() {
+            if (answers.some(a => a === null)) {
+                alert('請完成所有問題！');
+                return;
+            }
+
+            const scores = calculateScores();
+            
+            // 儲存結果到 GitHub Issues
+            saveResultToGitHub(scores);
+            
+            showResults(scores);
+        }
+
+        function calculateScores() {
+            const giftNames = ['預言', '執事', '教導', '勸化', '施捨', '治理', '憐憫人'];
+            const scores = {};
+
+            giftNames.forEach(name => {
+                scores[name] = 0;
+            });
+
+            questions.forEach((q, index) => {
+                if (answers[index] !== null) {
+                    scores[q.gift] += answers[index];
+                }
+            });
+
+            return scores;
+        }
+
+        async function saveResultToGitHub(scores) {
+            // 找出最高分恩賜
+            let maxScore = 0;
+            let topGift = '';
+            for (let [gift, score] of Object.entries(scores)) {
+                if (score > maxScore) {
+                    maxScore = score;
+                    topGift = gift;
+                }
+            }
+
+            // 建立結果文字
+            let resultText = `## 🎉 個性恩賜問卷結果\n\n`;
+            resultText += `**完成時間：** ${new Date().toLocaleString('zh-HK')}\n\n`;
+            resultText += `**主要恩賜：** ${topGift}（${maxScore}分）\n\n`;
+            resultText += `### 各項分數\n\n`;
+            
+            const sorted = Object.entries(scores).sort((a, b) => b[1] - a[1]);
+            sorted.forEach(([gift, score]) => {
+                const bar = '█'.repeat(Math.round(score / 15 * 20));
+                resultText += `- **${gift}**：${score}/15 ${bar}\n`;
+            });
+
+            resultText += `\n---\n*由個性恩賜問卷系統自動記錄*`;
+
+            // 從 localStorage 讀取 GitHub 設定
+            const config = JSON.parse(localStorage.getItem('githubConfig') || '{}');
+            
+            if (!config.token || !config.username || !config.repo) {
+                console.log('未設定 GitHub，結果只儲存在本地');
+                // 仍然儲存到 localStorage 作為備份
+                saveResultLocally(scores);
+                return;
+            }
+
+            try {
+                const response = await fetch(`https://api.github.com/repos/${config.username}/${config.repo}/issues`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `token ${config.token}`,
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        title: `問卷結果 - ${topGift} (${new Date().toLocaleDateString('zh-HK')})`,
+                        body: resultText,
+                        labels: ['問卷結果', topGift]
+                    })
+                });
+
+                if (response.ok) {
+                    console.log('結果已成功儲存到 GitHub Issues');
+                } else {
+                    console.error('儲存到 GitHub 失敗:', await response.text());
+                    // 失敗時儲存到 localStorage 作為備份
+                    saveResultLocally(scores);
+                }
+            } catch (error) {
+                console.error('網絡錯誤:', error);
+                saveResultLocally(scores);
+            }
+        }
+
+        function saveResultLocally(scores) {
+            // 找出最高分恩賜
+            let maxScore = 0;
+            let topGift = '';
+            for (let [gift, score] of Object.entries(scores)) {
+                if (score > maxScore) {
+                    maxScore = score;
+                    topGift = gift;
+                }
+            }
+
+            const result = {
+                id: Date.now(),
+                timestamp: new Date().toLocaleString('zh-HK'),
+                scores: scores,
+                topGift: topGift,
+                topScore: maxScore
+            };
+
+            let allResults = JSON.parse(localStorage.getItem('giftSurveyResults') || '[]');
+            allResults.push(result);
+            localStorage.setItem('giftSurveyResults', JSON.stringify(allResults));
+        }
+
+        function showResults(scores) {
+            document.getElementById('questionnaireArea').style.display = 'none';
+            document.getElementById('resultContainer').classList.add('active');
+
+            let maxScore = 0;
+            let topGift = '';
+            for (let [gift, score] of Object.entries(scores)) {
+                if (score > maxScore) {
+                    maxScore = score;
+                    topGift = gift;
+                }
+            }
+
+            document.getElementById('topGiftDisplay').textContent = `🏆 你主要嘅恩賜係：${topGift}（${maxScore}分）`;
+
+            renderChart(scores);
+            renderGiftCards(scores);
+        }
+
+        function renderChart(scores) {
+            const container = document.getElementById('chartBars');
+            container.innerHTML = '';
+
+            const maxPossibleScore = 15;
+
+            for (let [gift, score] of Object.entries(scores)) {
+                const percentage = (score / maxPossibleScore) * 100;
+                const group = document.createElement('div');
+                group.className = `chart-bar-group gift-${gift}`;
+
+                group.innerHTML = `
+                    <div class="chart-label">
+                        <span class="gift-name">${gift}</span>
+                        <span class="gift-score">${score} / ${maxPossibleScore}</span>
+                    </div>
+                    <div class="chart-bar-bg">
+                        <div class="chart-bar-fill" style="width: ${percentage}%;">
+                            ${score > 0 ? score : ''}
+                        </div>
+                    </div>
+                `;
+
+                container.appendChild(group);
+            }
+        }
+
+        function renderGiftCards(scores) {
+            const container = document.getElementById('resultCards');
+            container.innerHTML = '';
+
+            const sorted = Object.entries(scores).sort((a, b) => b[1] - a[1]);
+
+            sorted.forEach(([gift, score]) => {
+                let scoreClass = 'score-low';
+                if (score >= 10) scoreClass = 'score-high';
+                else if (score >= 6) scoreClass = 'score-medium';
+
+                const card = document.createElement('div');
+                card.className = 'gift-card';
+                card.innerHTML = `
+                    <h4>
+                        ${gift}
+                        <span class="score-badge ${scoreClass}">${score}分</span>
+                    </h4>
+                    <p>最高分數：15分</p>
+                `;
+
+                container.appendChild(card);
+            });
+        }
+
+        function restartQuiz() {
+            answers = new Array(35).fill(null);
+            currentQuestion = 0;
+
+            document.getElementById('questionnaireArea').style.display = 'block';
+            document.getElementById('resultContainer').classList.remove('active');
+
+            document.querySelectorAll('.option-btn').forEach(btn => {
+                btn.className = 'option-btn';
+            });
+
+            showQuestion(0);
+            updateProgress();
+            updateNavButtons();
+        }
+
+        // ===== GitHub Config Functions =====
+        function loadGitHubConfig() {
+            const config = JSON.parse(localStorage.getItem('githubConfig') || '{}');
+            if (config.token) document.getElementById('githubToken').value = config.token;
+            if (config.username) document.getElementById('githubUsername').value = config.username;
+            if (config.repo) document.getElementById('githubRepo').value = config.repo;
+        }
+
+        function saveGitHubConfig() {
+            const token = document.getElementById('githubToken').value.trim();
+            const username = document.getElementById('githubUsername').value.trim();
+            const repo = document.getElementById('githubRepo').value.trim();
+
+            if (!token || !username || !repo) {
+                document.getElementById('configStatus').className = 'status status-error';
+                document.getElementById('configStatus').textContent = '❌ 請填寫所有欄位';
+                return;
+            }
+
+            const config = { token, username, repo };
+            localStorage.setItem('githubConfig', JSON.stringify(config));
+
+            document.getElementById('configStatus').className = 'status status-success';
+            document.getElementById('configStatus').textContent = '✅ 設定已儲存！';
+            
+            setTimeout(() => {
+                document.getElementById('configStatus').textContent = '';
+            }, 3000);
+        }
+
+        // ===== Admin Panel Functions =====
+        function openAdminPanel() {
+            document.getElementById('adminOverlay').classList.add('active');
+            renderAdminPanel();
+        }
+
+        function closeAdminPanel() {
+            document.getElementById('adminOverlay').classList.remove('active');
+        }
+
+        async function renderAdminPanel() {
+            // 先從 GitHub Issues 讀取數據
+            await loadDataFromGitHub();
+            
+            const allResults = JSON.parse(localStorage.getItem('giftSurveyResults') || '[]');
+            const totalParticipants = allResults.length;
+
+            // 更新統計數字
+            document.getElementById('totalParticipants').textContent = totalParticipants;
+
+            if (totalParticipants === 0) {
+                document.getElementById('topGiftCount').textContent = '0';
+                document.getElementById('topGiftName').textContent = '-';
+                document.getElementById('adminChartBars').innerHTML = '<div class="no-data">暫無數據</div>';
+                document.getElementById('adminDataTable').innerHTML = '<div class="no-data">暫無參與記錄</div>';
+                return;
+            }
+
+            // 計算每種恩賜嘅人數
+            const giftCounts = {
+                '預言': 0, '執事': 0, '教導': 0, '勸化': 0, '施捨': 0, '治理': 0, '憐憫人': 0
+            };
+
+            allResults.forEach(result => {
+                if (giftCounts.hasOwnProperty(result.topGift)) {
+                    giftCounts[result.topGift]++;
+                }
+            });
+
+            // 找出最多人擁有嘅恩賜
+            let maxCount = 0;
+            let maxGift = '';
+            for (let [gift, count] of Object.entries(giftCounts)) {
+                if (count > maxCount) {
+                    maxCount = count;
+                    maxGift = gift;
+                }
+            }
+
+            document.getElementById('topGiftCount').textContent = maxCount;
+            document.getElementById('topGiftName').textContent = maxGift;
+
+            // 渲染棒型圖
+            renderAdminChart(giftCounts, totalParticipants);
+
+            // 渲染數據表格
+            renderAdminTable(allResults);
+        }
+
+        async function loadDataFromGitHub() {
+            const config = JSON.parse(localStorage.getItem('githubConfig') || '{}');
+            
+            if (!config.token || !config.username || !config.repo) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`https://api.github.com/repos/${config.username}/${config.repo}/issues?labels=問卷結果&state=all&per_page=100`, {
+                    headers: {
+                        'Authorization': `token ${config.token}`,
+                        'Accept': 'application/vnd.github.v3+json'
+                    }
+                });
+
+                if (response.ok) {
+                    const issues = await response.json();
+                    
+                    // 將 GitHub Issues 轉換為結果格式
+                    const githubResults = issues.map(issue => {
+                        // 從 issue body 解析分數
+                        const scores = {};
+                        const giftNames = ['預言', '執事', '教導', '勸化', '施捨', '治理', '憐憫人'];
+                        
+                        giftNames.forEach(gift => {
+                            const match = issue.body.match(new RegExp(`\\*\\*${gift}\\*\\*：([0-9]+)/15`));
+                            scores[gift] = match ? parseInt(match[1]) : 0;
+                        });
+
+                        // 找出主要恩賜
+                        let maxScore = 0;
+                        let topGift = '';
+                        for (let [gift, score] of Object.entries(scores)) {
+                            if (score > maxScore) {
+                                maxScore = score;
+                                topGift = gift;
+                            }
+                        }
+
+                        return {
+                            id: issue.id,
+                            timestamp: new Date(issue.created_at).toLocaleString('zh-HK'),
+                            scores: scores,
+                            topGift: topGift,
+                            topScore: maxScore
+                        };
+                    });
+
+                    // 合併本地數據和 GitHub 數據
+                    const localResults = JSON.parse(localStorage.getItem('giftSurveyResults') || '[]');
+                    const mergedResults = [...githubResults, ...localResults];
+                    
+                    // 去除重複（以 id 為準）
+                    const uniqueResults = [];
+                    const seenIds = new Set();
+                    mergedResults.forEach(result => {
+                        if (!seenIds.has(result.id)) {
+                            seenIds.add(result.id);
+                            uniqueResults.push(result);
+                        }
+                    });
+
+                    localStorage.setItem('giftSurveyResults', JSON.stringify(uniqueResults));
+                }
+            } catch (error) {
+                console.error('從 GitHub 讀取數據失敗:', error);
+            }
+        }
+
+        function renderAdminChart(giftCounts, total) {
+            const container = document.getElementById('adminChartBars');
+            container.innerHTML = '';
+
+            const maxCount = Math.max(...Object.values(giftCounts), 1);
+
+            for (let [gift, count] of Object.entries(giftCounts)) {
+                const percentage = total > 0 ? (count / total) * 100 : 0;
+                const barWidth = maxCount > 0 ? (count / maxCount) * 100 : 0;
+                
+                const group = document.createElement('div');
+                group.className = 'admin-chart-bar-group';
+
+                group.innerHTML = `
+                    <div class="admin-chart-label">
+                        <span class="gift-name">${gift}</span>
+                        <span class="gift-count">${count} 人 (${percentage.toFixed(1)}%)</span>
+                    </div>
+                    <div class="admin-chart-bar-bg">
+                        <div class="admin-chart-bar-fill gift-${gift}" style="width: ${barWidth}%;">
+                            ${count > 0 ? count : ''}
+                        </div>
+                    </div>
+                `;
+
+                container.appendChild(group);
+            }
+        }
+
+        function renderAdminTable(allResults) {
+            const container = document.getElementById('adminDataTable');
+            
+            if (allResults.length === 0) {
+                container.innerHTML = '<div class="no-data">暫無參與記錄</div>';
+                return;
+            }
+
+            let html = `
+                <table class="admin-data-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>時間</th>
+                            <th>主要恩賜</th>
+                            <th>分數</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            // 由新到舊排序
+            const sortedResults = [...allResults].reverse();
+
+            sortedResults.forEach((result, index) => {
+                html += `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td>${result.timestamp}</td>
+                        <td><strong>${result.topGift}</strong></td>
+                        <td>${result.topScore} / 15</td>
+                        <td>
+                            <button class="delete-btn" onclick="deleteResult(${result.id})">刪除</button>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            html += `
+                    </tbody>
+                </table>
+            `;
+
+            container.innerHTML = html;
+        }
+
+        function deleteResult(id) {
+            if (!confirm('確定要刪除呢個記錄？')) return;
+
+            let allResults = JSON.parse(localStorage.getItem('giftSurveyResults') || '[]');
+            allResults = allResults.filter(r => r.id !== id);
+            localStorage.setItem('giftSurveyResults', JSON.stringify(allResults));
+            
+            renderAdminPanel();
+        }
+
+        function clearAllData() {
+            if (!confirm('確定要清除所有數據？呢個動作唔可以還原！')) return;
+            
+            localStorage.removeItem('giftSurveyResults');
+            renderAdminPanel();
+        }
+
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
